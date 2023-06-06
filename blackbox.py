@@ -1,5 +1,3 @@
-
-
 from scipy.spatial import distance
 from numpy import ones,vstack
 from numpy.linalg import lstsq
@@ -7,16 +5,6 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-
-
-# Main Variables
-# plotting_on = 1
-# mask_plotting = 1
-# cluster_size = 2
-# noise_threshold = 10.0
-# S = 1
-# sample_size = 49
-# cluster_size = 2
 
 
 def getEquidistantPoints(p1, p2, parts):
