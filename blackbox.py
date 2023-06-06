@@ -37,16 +37,16 @@ def estimate_epsilon(X, labels):
                 cluster_i[idx] = X[idx]
         clusters[i] = cluster_i
     for key in clusters.keys():
-        print("Cluster", key)
+        # print("Cluster", key)
         node = list(clusters[key].values())
-        print("------------------------------node------------------------------")
+        # print("------------------------------node------------------------------")
         longest_dis = [] # Lower bound
         for i in range(len(node)):
             longest_dis.append(distance.cdist([node[i]], node[:i]+node[i+1:]).min())
         max_gap = max(longest_dis)
-        print("Lower bound: ", longest_dis)
-        print("Max is", max(longest_dis)) # The biggest gap between points in each cluster
-        print("Average is: ", sum(longest_dis)/len(longest_dis))
+        # print("Lower bound: ", longest_dis)
+        # print("Max is", max(longest_dis)) # The biggest gap between points in each cluster
+        # print("Average is: ", sum(longest_dis)/len(longest_dis))
         est_eps.append(max_gap)
 
     return max(est_eps)
@@ -67,12 +67,23 @@ def estimate_min_pts(X, labels, epsilon):
 
     return min_pts
     
+def plot_clusters(X, clusters):
+    # Plot the clusters
+    plt.figure(figsize=(8, 6))
+    plt.scatter(X[:, 0], X[:, 1], c=clusters, s=10, alpha=0.7)
+
+    plt.title('Poinsed Clustering')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.grid(True)
+
+    plt.show()
 
 def run_dbscans(epsilon, min_sample, X):    
     db_model = DBSCAN(eps = epsilon, min_samples = min_sample)
     db_pre = db_model.fit(X)
     clusters = db_pre.labels_
-    plt.scatter(X[:, 0], X[:, 1], c=clusters)
+    plot_clusters(X, clusters)
     num_clusters = len(set(clusters))-1 # Noisy samples are given the label -1.
     return clusters, num_clusters
 
@@ -130,20 +141,20 @@ def merge_two(X, labels):
         out[key].append(value)
     
     out.pop(-1)
-    print(out)
+    # print(out)
 
     # Get the cenroids of all clusters
     for k in out.keys():
         cenroid = GetMedoid(out[k])
         cenroids[k] = cenroid
          
-    print(cenroids)
+    # print(cenroids)
 
     # looking for the closest two and get the labels
     first, second = nearest_neighbours(cenroids)
 
     # return the closest two clusters labels
-    print("The two clusters to merge are {}, {}. ".format(first, second))
+    # print("The two clusters to merge are {}, {}. ".format(first, second))
     return first, second
     
 
@@ -153,8 +164,8 @@ def db_merge(X, labels):
     # Variables
     epsilon = estimate_epsilon(X, labels)
     min_sam = estimate_min_pts(X, labels, epsilon)
-    print("Estimated epsilon is ", epsilon)
-    print("Estimated min-sample is ", min_sam)
+    # print("Estimated epsilon is ", epsilon)
+    # print("Estimated min-sample is ", min_sam)
 
     # When there more than one clusters
     # Start with the closest diff of means between clusters
@@ -172,7 +183,7 @@ def db_merge(X, labels):
             cluster_2[idx] = X[idx]
     
     closest_distance, closest_pair = closest_node(cluster_1, cluster_2, epsilon)    
-    print("The closest distance is: ", closest_distance)
+    # print("The closest distance is: ", closest_distance)
 
     # Step 2: Report their distance and generate data mines fall into the range of T - epsilon
     X_noisy = np.copy(X)
@@ -215,7 +226,7 @@ def db_merge(X, labels):
 
     # Summary:
     clusters, num_clusters = run_dbscans(epsilon, min_sam, X_noisy)
-    print("The number of points we generate are: ", num_noisy)
+    # print("The number of points we generate are: ", num_noisy)
 
     return X_noisy, clusters, num_clusters, num_noisy
 
@@ -226,7 +237,7 @@ def main(X, clusters):
     i = 1
     costs = 0
     while num_clusters > 1:
-        print("Iteration: ", i)
+        # print("Iteration: ", i)
         X, clusters, num_clusters, cost = db_merge(X, clusters)
         costs += cost
         i += 1
